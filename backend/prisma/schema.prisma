@@ -1,0 +1,214 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+enum PropertyStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum PropertyType {
+  RENT
+  SALE
+}
+enum userStatus {
+  ACTIVE
+  BLOCKED
+}
+
+
+
+
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+
+  firstName   String?
+  lastName    String?
+  phone       String?  @unique
+  avatar      String?
+
+  role        Role     @default(CUSTOMER)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  properties  Property[]
+  reviews     Review[]
+  favorites   Favorite[]
+  blogs       Blog[]
+}
+
+
+
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  subCategories SubCategory[]
+  properties  Property[]
+}
+
+
+
+model SubCategory {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  properties  Property[]
+}
+
+
+
+model State {
+  id         Int      @id @default(autoincrement())
+  name       String
+  slug       String   @unique
+
+  cities     City[]
+  properties Property[]
+}
+
+model City {
+  id       Int     @id @default(autoincrement())
+  name     String
+  slug     String  @unique
+
+  stateId  Int
+  state    State   @relation(fields: [stateId], references: [id])
+
+  properties Property[]
+}
+
+
+
+model Property {
+  id            Int             @id @default(autoincrement())
+
+  title         String
+  slug          String          @unique
+  description   String
+
+  price         Float
+
+  type          PropertyType
+  status        PropertyStatus  @default(PENDING)
+
+  address       String?
+
+  categoryId    Int
+  category      Category        @relation(fields: [categoryId], references: [id])
+
+  subCategoryId Int
+  subCategory   SubCategory     @relation(fields: [subCategoryId], references: [id])
+
+  stateId       Int
+  state         State           @relation(fields: [stateId], references: [id])
+
+  cityId        Int
+  city          City            @relation(fields: [cityId], references: [id])
+
+  userId        Int
+  user          User            @relation(fields: [userId], references: [id])
+
+  images        PropertyImage[]
+
+  reviews       Review[]
+  favorites     Favorite[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+}
+
+
+
+model PropertyImage {
+  id         Int      @id @default(autoincrement())
+  imageUrl   String
+
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+
+
+model Favorite {
+  id         Int      @id @default(autoincrement())
+
+  userId     Int
+  propertyId Int
+
+  user       User     @relation(fields: [userId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, propertyId])
+}
+
+
+
+model Review {
+  id         Int      @id @default(autoincrement())
+
+  rating     Int
+  comment    String?
+
+  userId     Int
+  propertyId Int
+
+  user       User     @relation(fields: [userId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
+
+
+
+model Blog {
+  id          Int      @id @default(autoincrement())
+
+  title       String
+  slug        String   @unique
+  content     String
+
+  coverImage  String?
+
+  createdBy   Int
+  author      User     @relation(fields: [createdBy], references: [id])
+
+  createdAt   DateTime @default(now())
+}
+
+
+
+model Testimonial {
+  id        Int      @id @default(autoincrement())
+
+  name      String
+  message   String
+  rating    Int
+
+  createdAt DateTime @default(now())
+}
+

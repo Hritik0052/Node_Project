@@ -1,0 +1,45 @@
+### Authentication API Tests
+### Use REST Client extension in VS Code to run these tests
+
+@baseUrl = http://localhost:5000/api/auth
+@token = YOUR_TOKEN_HERE
+
+### 1. Register User
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "password123",
+  "firstName": "John",
+  "lastName": "Doe",
+  "phone": "+1234567890"
+}
+
+### 2. Login User
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+### 3. Get User Profile (Protected)
+GET {{baseUrl}}/profile
+Authorization: Bearer {{token}}
+
+### 4. Update User Profile (Protected)
+PUT {{baseUrl}}/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "phone": "+9876543210"
+}
+
+### 5. Logout User (Protected)
+POST {{baseUrl}}/logout
+Authorization: Bearer {{token}}
