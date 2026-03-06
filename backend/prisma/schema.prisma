@@ -54,7 +54,6 @@ model User {
 
 
 
-
 model Category {
   id          Int      @id @default(autoincrement())
   name        String
@@ -84,15 +83,19 @@ model State {
   id         Int      @id @default(autoincrement())
   name       String
   slug       String   @unique
+  code       String?  @unique
 
   cities     City[]
   properties Property[]
 }
 
+
+
 model City {
   id       Int     @id @default(autoincrement())
   name     String
   slug     String  @unique
+  code     String  
 
   stateId  Int
   state    State   @relation(fields: [stateId], references: [id])
