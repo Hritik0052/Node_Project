@@ -49,7 +49,4 @@ coverage/
 # Frontend directory
 frontend/
 
-
-node_modules
-.env
 *.db
